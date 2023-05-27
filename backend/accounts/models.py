@@ -9,3 +9,12 @@ class CustomUser(AbstractUser):
 class Order(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     order_data = models.JSONField()
+
+class Product(models.Model):
+    sku = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    colors = models.JSONField()
+    sizes = models.JSONField()
+    description= models.CharField(max_length=512)
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    image = models.URLField()

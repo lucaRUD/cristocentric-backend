@@ -4,6 +4,7 @@ from django.views import View
 import requests
 from rest_framework import status,views,generics
 from rest_framework.response import Response
+import stripe
 from .serializers import UserSerializer
 from .models import CustomUser, Order
 from django.contrib.auth.tokens import default_token_generator
@@ -11,7 +12,23 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth import authenticate, login
 from django.core.mail import send_mail
 from django.utils.encoding import force_bytes, force_str
+from backend import settings
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+class CreatePaymentView(views.APIView):
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        amount = data['amount']
+
+        payment_intent = stripe.PaymentIntent.create(
+            amount=amount,
+            currency='usd',
+        )
+
+        return JsonResponse({
+            'clientSecret': payment_intent['client_secret']
+        })
 
 class ProdigiProductsAPIView(views.APIView):
     def get(self, request, product_id):
