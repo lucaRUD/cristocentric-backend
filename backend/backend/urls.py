@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from accounts.views import ProdigiProductsAPIView,CreatePaymentView
+from accounts.views import ProdigiProductsAPIView,CreatePaymentView,CreateCheckoutSessionView
 
 
 
@@ -27,6 +27,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('products/<str:product_id>',ProdigiProductsAPIView.as_view()),
     path('create-payment/',CreatePaymentView.as_view(), name='create_payment'),
+    path('create-checkout-session/', CreateCheckoutSessionView.as_view(), name='create_checkout_session'),
 
 
 ]

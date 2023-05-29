@@ -9,12 +9,40 @@ from .serializers import UserSerializer
 from .models import CustomUser, Order
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login,logout
 from django.core.mail import send_mail
 from django.utils.encoding import force_bytes, force_str
 from backend import settings
+from django.contrib.sessions.models import Session
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+class CreateCheckoutSessionView(views.APIView):
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        amount = data['amount']
+
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': 'Your product name',
+                    },
+                    'unit_amount': amount,
+                },
+                'quantity': 1,
+            }],
+            mode='payment',
+            success_url='http://localhost:4200/home',
+            cancel_url='http://localhost:4200/home',
+        )
+
+        return JsonResponse({
+            'sessionId': checkout_session['id']
+        })
 
 class CreatePaymentView(views.APIView):
     def post(self, request, *args, **kwargs):
@@ -117,6 +145,7 @@ class LoginView(views.APIView):
     def post(self, request):
         username_or_email = request.data.get('username')
         password = request.data.get('password')
+        print(request.data)
         try:
             user = CustomUser.objects.get(email=username_or_email)
             username = user.username
@@ -128,3 +157,19 @@ class LoginView(views.APIView):
             return Response({'status': 'success'}, status=status.HTTP_200_OK)
         else:
             return Response({'status': 'failure'}, status=status.HTTP_400_BAD_REQUEST)
+        
+class GetAuthStatusView(LoginRequiredMixin, views.APIView):
+    def get(self, request):
+        return JsonResponse({'is_authenticated': request.user.is_authenticated})
+    
+
+class LogoutView(views.APIView):
+    def post(self, request):
+        logout(request)
+        return JsonResponse({'status': 'success'})
+    
+class UserDataView(LoginRequiredMixin, View):
+    def get(self, request):
+        user = request.user
+        serializer = UserSerializer(user)
+        return JsonResponse(serializer.data)

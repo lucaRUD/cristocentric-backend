@@ -162,6 +162,8 @@ CORS_ALLOWED_ORIGINS = [
     'http://google.com',
 ]
 CSRF_TRUSTED_ORIGINS = ['http://localhost:4200']
+CORS_ALLOW_CREDENTIALS = True
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 14 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com' # your email provider's smtp server

@@ -1,6 +1,6 @@
 from django.urls import include, path
-from accounts.views import ProdigiOrdersAPIView, RegisterView, VerifyEmailView,LoginView,check_fields
-from django.contrib.auth.views import LogoutView
+from accounts.views import ProdigiOrdersAPIView, RegisterView, VerifyEmailView,LoginView,GetAuthStatusView,LogoutView,UserDataView,check_fields
+
 from .serializers import urlpatterns as api_urls
 
 
@@ -13,6 +13,8 @@ urlpatterns = [
     path('check-fields/<str:email>/<str:username>/<str:phone_number>/', check_fields),
     path('logout/',LogoutView.as_view()),
     path('orders/',ProdigiOrdersAPIView.as_view()),
+    path('get-auth-status/',GetAuthStatusView.as_view()),
+    path('user-data/', UserDataView.as_view(), name='user-data'),
     
 ]
 
