@@ -36,7 +36,7 @@ class CreateCheckoutSessionView(views.APIView):
                 'quantity': 1,
             }],
             mode='payment',
-            success_url='http://localhost:4200/home',
+            success_url='http://localhost:4200/order-complete?sessionId={CHECKOUT_SESSION_ID}',
             cancel_url='http://localhost:4200/home',
         )
 
