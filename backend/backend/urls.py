@@ -15,8 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from accounts.views import ProdigiProductsAPIView,CreatePaymentView,CreateCheckoutSessionView
-
+from accounts.views import ProdigiProductsAPIView,CreatePaymentView,CreateCheckoutSessionView,ArticleList,ArticleDetail,CreateArticle,ArticleUpdate,ArticleDelete,ArticleFileUploadView,EventCreateView,EventDetailView,EventFileUploadView,PublicEventListView,AddOrderDataAPIView
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 
@@ -28,6 +29,21 @@ urlpatterns = [
     path('products/<str:product_id>',ProdigiProductsAPIView.as_view()),
     path('create-payment/',CreatePaymentView.as_view(), name='create_payment'),
     path('create-checkout-session/', CreateCheckoutSessionView.as_view(), name='create_checkout_session'),
+    path('articles/', ArticleList.as_view()),
+    path('articles/<int:pk>/', ArticleDetail.as_view()),
+    path('create-article/', CreateArticle.as_view()),
+    path('articles/<int:pk>/update/', ArticleUpdate.as_view()),
+    path('articles/<int:pk>/delete/', ArticleDelete.as_view()),
+    path('upload-file/<int:article_id>/', ArticleFileUploadView.as_view()),
+    path('event-upload-file/<int:event_id>/', EventFileUploadView.as_view()),
+    path('events/', EventCreateView.as_view(), name='event-create'),
+    path('events-public/', PublicEventListView.as_view(), name='event-create'),
+    path('events/<int:event_id>/', EventDetailView.as_view(), name='event-detail'),
+    path('addorders/',AddOrderDataAPIView.as_view(), name='add-order-data')
 
+    
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

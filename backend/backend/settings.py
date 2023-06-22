@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -159,9 +160,14 @@ ACCOUNT_USERNAME_REQUIRED = False
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
-    'http://google.com',
+]
+
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:4200',
 ]
 CSRF_TRUSTED_ORIGINS = ['http://localhost:4200']
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False    
 CORS_ALLOW_CREDENTIALS = True
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 14 
 
@@ -177,3 +183,11 @@ SOCIALACCOUNT_LOGIN_ON_GET=True
 PRINTFUL_SECRET_KEY = os.environ.get('CsUiTRXX3iUCXPxPZ8YHmUdgMHeqhp5HgeSAgtaj')
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CELERY_BEAT_SCHEDULE = {
+    'send_event_reminders': {
+        'task': 'accounts.tasks.send_event_reminders',
+        'schedule': crontab(hour=0, minute=0),
+    },
+}

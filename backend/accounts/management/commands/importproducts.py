@@ -3,8 +3,8 @@ import requests
 from accounts.models import Product
 
 def import_products():
-    skus = ['A-MH-JH001', 'A-MT-3413', 'A-WT-6004']
-    headers = {'X-API-Key': 'test_197d4ae4-7f06-4c01-8ad8-601cb4e78512'}
+    skus = ['A-MH-JH001', 'A-MT-3413', 'A-WT-6004','GLOBAL-TEE-BC-6004','GLOBAL-TEE-GIL-64000','A-KH-JH001B']
+    headers = {'X-API-Key': 'ac6f8a4f-1bae-4826-a837-6e012b910651'}
     for sku in skus:
         response = requests.get(f'https://api.sandbox.prodigi.com/v4.0/products/{sku}', headers=headers)
         print(response.status_code)
@@ -15,7 +15,7 @@ def import_products():
             description=data['product']['description'],
             colors=data['product']['attributes']['color'],
             sizes=data['product']['attributes']['size'],
-            price=99.99,
+            price=49.99,
             image='https://example.com/image.png',
         )
         product.save()

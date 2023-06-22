@@ -1,6 +1,7 @@
 from rest_framework import serializers,viewsets
-from .models import CustomUser, Product
+from .models import CustomUser, Product,Article,Event
 from rest_framework import routers
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -43,4 +44,26 @@ router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'products', ProductViewSet)
 
+
+
+class ArticleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Article
+        fields = ('id', 'title', 'content', 'author', 'date', 'category', 'main_image', 'is_archived', 'is_public')
+
+class EventSerializer(serializers.ModelSerializer):
+    created_at = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Event
+        fields = ['id', 'title', 'description', 'location','general_location', 'image', 'date', 'created_at',"is_public",'is_archived']
+
+    def get_created_at(self, obj):
+        return obj.formatted_created_at()
+
+class EventViewSet(viewsets.ModelViewSet):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+
 urlpatterns = router.urls
+
